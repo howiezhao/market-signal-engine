@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "market-signal-engine",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-25",
+  "observability": {
+    "enabled": true
+  },
+  "triggers": {
+    "crons": ["*/30 * * * *"]
+  },
+  "vars": {
+    "CMC_FEAR_ALERT_THRESHOLD": "20",
+    "VIX_ALERT_THRESHOLD": "45"
+  }
+}
