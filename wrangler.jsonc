@@ -10,7 +10,7 @@
     "crons": ["*/30 * * * *"]
   },
   "vars": {
-    "CMC_FEAR_ALERT_THRESHOLD": "20",
+    "CMC_FGI_ALERT_THRESHOLD": "20",
     "VIX_ALERT_THRESHOLD": "45"
   }
 }

@@ -17,7 +17,7 @@ npx wrangler secret put TELEGRAM_BOT_TOKEN
 npx wrangler secret put TELEGRAM_CHAT_ID
 ```
 
-Thresholds live in `wrangler.jsonc` as `CMC_FEAR_ALERT_THRESHOLD` and `VIX_ALERT_THRESHOLD`.
+Thresholds live in `wrangler.jsonc` as `CMC_FGI_ALERT_THRESHOLD` and `VIX_ALERT_THRESHOLD`.
 
 ## Develop
 

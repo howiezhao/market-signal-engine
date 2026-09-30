@@ -2,22 +2,22 @@ export interface Env {
   CMC_API_KEY: string;
   TELEGRAM_BOT_TOKEN: string;
   TELEGRAM_CHAT_ID: string;
-  CMC_FEAR_ALERT_THRESHOLD: string;
+  CMC_FGI_ALERT_THRESHOLD: string;
   VIX_ALERT_THRESHOLD: string;
 }
 
 export interface Thresholds {
-  cmcFear: number;
+  cmcFgi: number;
   vix: number;
 }
 
 export function readThresholds(env: Env): Thresholds {
-  const cmcFear = Number(env.CMC_FEAR_ALERT_THRESHOLD);
+  const cmcFgi = Number(env.CMC_FGI_ALERT_THRESHOLD);
   const vix = Number(env.VIX_ALERT_THRESHOLD);
-  if (!Number.isFinite(cmcFear) || !Number.isFinite(vix)) {
+  if (!Number.isFinite(cmcFgi) || !Number.isFinite(vix)) {
     throw new Error("Alert thresholds must be numbers");
   }
-  return { cmcFear, vix };
+  return { cmcFgi, vix };
 }
 
 export function assertSecrets(env: Env): void {

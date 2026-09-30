@@ -1,16 +1,16 @@
 import { assertSecrets, readThresholds, type Env } from "./env";
-import { cmcFearGreedAlert, fetchCmcFearGreed } from "./cmc-fear-greed";
+import { cmcFgiAlert, fetchCmcFgi } from "./cmc-fgi";
 import { sendTelegramMessage } from "./telegram";
 import { fetchVix, vixAlert } from "./vix";
 
-async function checkCmcFearGreed(env: Env, threshold: number): Promise<string> {
-  const reading = await fetchCmcFearGreed(env.CMC_API_KEY);
-  console.log(`CMC Fear & Greed: ${reading.value} (${reading.classification})`);
-  const alert = cmcFearGreedAlert(reading, threshold);
+async function checkCmcFgi(env: Env, threshold: number): Promise<string> {
+  const reading = await fetchCmcFgi(env.CMC_API_KEY);
+  console.log(`CMC FGI: ${reading.value} (${reading.classification})`);
+  const alert = cmcFgiAlert(reading, threshold);
   if (alert) {
     await sendTelegramMessage(env, alert);
   }
-  return `cmc-fear-greed ${reading.value} (${reading.classification})`;
+  return `cmc-fgi ${reading.value} (${reading.classification})`;
 }
 
 async function checkVix(env: Env, threshold: number): Promise<string> {
@@ -27,7 +27,7 @@ async function runChecks(env: Env): Promise<string[]> {
   assertSecrets(env);
   const thresholds = readThresholds(env);
   const tasks = [
-    checkCmcFearGreed(env, thresholds.cmcFear),
+    checkCmcFgi(env, thresholds.cmcFgi),
     checkVix(env, thresholds.vix),
   ];
 
@@ -63,7 +63,7 @@ export default {
       return Response.json({
         ok: true,
         schedule: "*/30 * * * *",
-        signals: ["cmc-fear-greed", "vix"],
+        signals: ["cmc-fgi", "vix"],
       });
     }
 
