@@ -2,6 +2,7 @@ export interface Env {
   CMC_API_KEY: string;
   TELEGRAM_BOT_TOKEN: string;
   TELEGRAM_CHAT_ID: string;
+  TV_WEBHOOK_SECRET: string;
   CMC_FGI_ALERT_THRESHOLD: string;
   VIX_ALERT_THRESHOLD: string;
 }

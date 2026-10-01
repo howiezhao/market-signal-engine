@@ -1,6 +1,7 @@
 import { assertSecrets, readThresholds, type Env } from "./env";
 import { cmcFgiAlert, fetchCmcFgi } from "./cmc-fgi";
 import { sendTelegramMessage } from "./telegram";
+import { handleTradingViewWebhook } from "./tv-webhook";
 import { fetchVix, vixAlert } from "./vix";
 
 async function checkCmcFgi(env: Env, threshold: number): Promise<string> {
@@ -57,16 +58,27 @@ export default {
     await runChecks(env);
   },
 
-  async fetch(request): Promise<Response> {
-    const url = new URL(request.url);
-    if (request.method === "GET" && url.pathname === "/") {
+  async fetch(request, env): Promise<Response> {
+    if (new URL(request.url).pathname !== "/") {
+      return new Response("Not found", { status: 404 });
+    }
+
+    if (request.method === "GET") {
       return Response.json({
         ok: true,
         schedule: "*/30 * * * *",
         signals: ["cmc-fgi", "vix"],
+        webhooks: ["tradingview"],
       });
     }
 
-    return new Response("Not found", { status: 404 });
+    if (request.method === "POST") {
+      return handleTradingViewWebhook(request, env);
+    }
+
+    return new Response("Method not allowed", {
+      status: 405,
+      headers: { allow: "GET, POST" },
+    });
   },
 } satisfies ExportedHandler<Env>;
