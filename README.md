@@ -1,30 +1,19 @@
 # Market Signal Engine
 
-Cloudflare Worker that sends a Telegram message for market alerts.
+This project is built with Cloudflare Workers and monitors financial market signals, sending notifications to IM platforms.
 
-Scheduled every 30 minutes:
+It includes the following active scheduled tasks, which run every 30 minutes:
 
-- CMC Crypto Fear & Greed Index below 20
-- VIX above 45, from the Yahoo Finance chart API (`^VIX`)
+- [**CMC FGI**](https://coinmarketcap.com/charts/fear-and-greed-index/) (CoinMarketCap Crypto Fear and Greed Index) < 20
+- [**VIX**](https://finance.yahoo.com/quote/%5EVIX/) (from the Yahoo Finance Chart API, `^VIX`) > 45
 
-While a scheduled condition stays true, the Worker sends that alert again on each run.
+When either condition is met, it may indicate a potentially attractive buying opportunity in the corresponding market, and a notification is sent to Telegram.
 
-Stock alerts are configured on TradingView. When an alert fires, TradingView POSTs to the Worker URL, and this Worker forwards it to Telegram.
-
-## Secrets
-
-Do not commit credentials. Set them as Worker secrets (or copy `.dev.vars.example` to `.dev.vars` for local dev):
-
-```bash
-npx wrangler secret put CMC_API_KEY
-npx wrangler secret put TELEGRAM_BOT_TOKEN
-npx wrangler secret put TELEGRAM_CHAT_ID
-npx wrangler secret put TV_WEBHOOK_SECRET
-```
-
-Thresholds live in `wrangler.jsonc` as `CMC_FGI_ALERT_THRESHOLD` and `VIX_ALERT_THRESHOLD`.
+The project also includes a passive **TradingView webhook receiver**, allowing any TradingView webhook alert to be forwarded to Telegram.
 
 ## Develop
+
+For local development, first copy `.dev.vars.example` to `.dev.vars` and populate it with real secrets.
 
 ```bash
 npm install
@@ -46,19 +35,22 @@ Connect the GitHub repo in the Cloudflare dashboard (Workers Builds) or run:
 npm run deploy
 ```
 
-The Worker is built from this repo with Wrangler. Cron is UTC: `*/30 * * * *`.
+The Worker is built from this repo with Wrangler. Cron is UTC: `*/30 * * * *`. Thresholds live in `wrangler.jsonc` as `CMC_FGI_ALERT_THRESHOLD` and `VIX_ALERT_THRESHOLD`.
 
-## TradingView webhook
+Additionally, please configure the following secrets using Wrangler or the Cloudflare dashboard:
 
-Create the alert on TradingView (for example, INTC crossing below 90) and enable its webhook. TradingView sends one POST. Use the deployed `https://` Worker URL on port 443.
-
-Webhook URL:
-
-```text
-https://<worker-host>
+```bash
+npx wrangler secret put CMC_API_KEY
+npx wrangler secret put TELEGRAM_BOT_TOKEN
+npx wrangler secret put TELEGRAM_CHAT_ID
+npx wrangler secret put TV_WEBHOOK_SECRET
 ```
 
-The body must be this JSON object. `secret` and `ticker` are required. Include at least one of `open`, `high`, `low`, `close`, using the field name that matches the placeholder. `message` is optional. Other fields are rejected. Quote every TradingView placeholder so the body stays valid JSON:
+## Integrate
+
+Integrating with TradingView only requires setting up a webhook alert and configuring the Webhook URL to point to the deployed Worker URL.
+
+Please note that the alert message must conform to the following JSON object format:
 
 ```json
 {
@@ -69,10 +61,16 @@ The body must be this JSON object. `secret` and `ticker` are required. Include a
 }
 ```
 
-`secret` authenticates the request. `message`, when present, is an extra line in the Telegram alert. Local check:
+`secret` and `ticker` are required. At least one of `open`, `high`, `low`, and `close` must be included, and the field names must exactly match the placeholders. `message` is optional. Any additional fields will be rejected.
 
-```bash
-curl -X POST "http://localhost:8787/" \
-  -H 'content-type: application/json' \
-  --data '{"secret":"YOUR_SECRET","ticker":"INTC","close":"89.50","message":"INTC price below 90"}'
-```
+`secret` authenticates the request. `message`, when present, is an extra line in the Telegram alert.
+
+For an explanation of these variables in TradingView, please refer to the [official documentation](https://www.tradingview.com/support/solutions/43000531021-how-to-use-a-variable-value-in-alert/).
+
+## Contributing
+
+Any PRs and issues are welcome.
+
+## License
+
+This repository is licensed under the [Apache-2.0 License](LICENSE).
