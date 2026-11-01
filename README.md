@@ -1,6 +1,6 @@
 # Market Signal Engine
 
-[![Static Badge](https://img.shields.io/badge/Telegram_Channel-Market_Signal_Live-blue)](https://t.me/@market_signal_live)
+[![Static Badge](https://img.shields.io/badge/Telegram_Channel-Market_Signal_Live-blue)](https://t.me/market_signal_live)
 
 This project is built with Cloudflare Workers and monitors financial market signals, sending notifications to IM platforms.
 
