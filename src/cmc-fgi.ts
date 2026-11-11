@@ -41,5 +41,5 @@ export function cmcFgiAlert(reading: CmcFgiReading, threshold: number): string |
   if (reading.value >= threshold) {
     return null;
   }
-  return `⚠️ CMC Crypto FGI below ${threshold}!\nCurrent value: ${reading.value} (${reading.classification})`;
+  return `🚨 Crypto Signal 🚨\nCMC Crypto FGI below ${threshold}!\nCurrent value: ${reading.value} (${reading.classification})`;
 }

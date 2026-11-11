@@ -61,5 +61,5 @@ export function vixAlert(reading: VixReading, threshold: number): string | null 
   if (reading.value <= threshold) {
     return null;
   }
-  return `⚠️ VIX above ${threshold}!\nCurrent value: ${reading.value} (${reading.symbol})`;
+  return `🚨 US Stock Signal 🚨\nVIX above ${threshold}!\nCurrent value: ${reading.value} (${reading.symbol})`;
 }
